@@ -57,8 +57,12 @@ st.caption("Three time-point supports based on assumed student log-data patterns
 if st.button("Reset Demo"):
     for k in list(st.session_state.keys()):
         del st.session_state[k]
+
+    if os.path.exists("goal_support_responses.csv"):
+        os.remove("goal_support_responses.csv")
+
     st.rerun()
-    
+
 tab1, tab2, tab3 = st.tabs(["Initiating", "Sustaining", "Completing"])
 
 with tab1:
