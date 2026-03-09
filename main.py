@@ -54,6 +54,11 @@ deadline_dt = datetime.combine(date.today() + timedelta(days=2), time(23, 59))
 st.title("Goal Support System")
 st.caption("Three time-point supports based on assumed student log-data patterns.")
 
+if st.button("Reset Demo"):
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
+    st.rerun()
+    
 tab1, tab2, tab3 = st.tabs(["Initiating", "Sustaining", "Completing"])
 
 with tab1:
