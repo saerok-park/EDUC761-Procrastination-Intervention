@@ -51,7 +51,7 @@ course_id = "BIO101"
 assignment_name = "Genetics Lab Report"
 deadline_dt = datetime.combine(date.today() + timedelta(days=2), time(23, 59))
 
-st.title("Behavior-Triggered Goal Support System")
+st.title("Goal Support System")
 st.caption("Three time-point supports based on assumed student log-data patterns.")
 
 tab1, tab2, tab3 = st.tabs(["Initiating", "Sustaining", "Completing"])
@@ -186,6 +186,7 @@ with tab3:
     st.progress(mock_last24_pct / 100)
     st.caption(f"Last 24 hours: {mock_last24_pct}%")
 
+    st.subheader("Reflection")
     planned_start = st.date_input(
         "When did you originally plan to start?",
         value=date.today() - timedelta(days=3),
@@ -208,29 +209,52 @@ with tab3:
     if barrier == "Other":
         barrier_other = st.text_input("Other (please specify)", key="complete_other")
 
-    use_checkpoint = st.radio(
-        "Would you like to set a midpoint checkpoint for the next assignment?",
-        ["Yes", "Skip"],
-        key="complete_checkpoint"
+    st.divider()
+    st.subheader("Plan for the Next Assignment")
+
+    improvement_focus = st.radio(
+        "What would you like to do differently on the next assignment?",
+        [
+            "Start earlier",
+            "Break the task into smaller steps",
+            "Plan my work sessions in advance",
+            "Ask for help sooner",
+            "Manage distractions better",
+            "Other"
+        ],
+        key="complete_improvement_focus"
     )
 
-    checkpoint_date = st.date_input(
-        "Suggested checkpoint date",
-        value=date.today() + timedelta(days=2),
-        key="complete_date"
+    improvement_other = ""
+    if improvement_focus == "Other":
+        improvement_other = st.text_input(
+            "Other (please specify)",
+            key="complete_improvement_other"
+        )
+
+    next_action = st.text_input(
+        "What is one specific action you will take for the next assignment?",
+        key="complete_next_action"
     )
-    checkpoint_time = st.time_input(
-        "Checkpoint time",
+
+    next_plan_date = st.date_input(
+        "When will you take this first step?",
+        value=date.today(),
+        key="complete_next_date"
+    )
+
+    next_plan_time = st.time_input(
+        "Time",
         value=time(19, 0),
-        key="complete_time"
+        key="complete_next_time"
     )
 
     if st.button("Save Reflection", key="save_complete"):
         barrier_final = barrier_other.strip() if barrier == "Other" else barrier
-        checkpoint_dt = (
-            datetime.combine(checkpoint_date, checkpoint_time).isoformat(timespec="minutes")
-            if use_checkpoint == "Yes" else ""
+        improvement_final = (
+            improvement_other.strip() if improvement_focus == "Other" else improvement_focus
         )
+        next_step_dt = datetime.combine(next_plan_date, next_plan_time)
 
         row = {
             "timestamp": now_iso(),
@@ -242,8 +266,9 @@ with tab3:
             "metric_last24h_pct": mock_last24_pct,
             "input_planned_start_date": planned_start.isoformat(),
             "input_barrier": barrier_final,
-            "input_set_checkpoint": use_checkpoint,
-            "input_checkpoint_time": checkpoint_dt,
+            "input_improvement_focus": improvement_final,
+            "input_next_assignment_action": next_action.strip(),
+            "input_next_assignment_start_time": next_step_dt.isoformat(timespec="minutes"),
         }
         append_to_csv(row)
         st.success("Reflection saved.")
