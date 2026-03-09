@@ -106,7 +106,7 @@ if st.sidebar.button("Clear Saved Responses"):
 # -----------------------------
 # Main
 # -----------------------------
-st.title("Behavior-Triggered Goal Support System (Wireframe)")
+st.title("Behavior-Triggered Goal Support System")
 st.caption("Rule-based triggers + structured goal scaffolds (initiating, sustaining, completing).")
 
 # Home
