@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime, date, time
 import os
 
-st.set_page_config(page_title="Goal Support System (Wireframe)", layout="centered")
+st.set_page_config(page_title="Goal Support System", layout="centered")
 
 # -----------------------------
 # Utilities
