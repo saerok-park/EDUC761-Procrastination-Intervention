@@ -1,7 +1,6 @@
-# app.py
 import streamlit as st
 import pandas as pd
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 import os
 
 st.set_page_config(page_title="Goal Support System", layout="centered")
@@ -21,7 +20,7 @@ def append_to_csv(row: dict, path: str = "goal_support_responses.csv"):
         df = df_new
     df.to_csv(path, index=False)
 
-def header_panel(assignment_name: str, deadline_dt: datetime, progress_label: str):
+def header_panel(assignment_name: str, deadline_dt: datetime, progress_label: str, progress_value: float):
     st.markdown("### Goal Support Panel")
     c1, c2 = st.columns([2, 1])
     with c1:
@@ -29,7 +28,7 @@ def header_panel(assignment_name: str, deadline_dt: datetime, progress_label: st
         st.markdown(f"**Deadline:** {deadline_dt.strftime('%a, %b %d, %I:%M %p')}")
     with c2:
         st.markdown("**Progress**")
-        st.progress(st.session_state.get("progress_bar", 0))
+        st.progress(progress_value)
         st.caption(progress_label)
     st.divider()
 
@@ -45,96 +44,27 @@ def card(title: str, body: str):
     )
 
 # -----------------------------
-# Demo State (so you can submit now)
+# Fixed demo values
 # -----------------------------
-if "screen" not in st.session_state:
-    st.session_state.screen = "home"  # home / initiation / midway / cramming / done
-if "progress_bar" not in st.session_state:
-    st.session_state.progress_bar = 0
+student_id = "S001"
+course_id = "BIO101"
+assignment_name = "Genetics Lab Report"
+deadline_dt = datetime.combine(date.today() + timedelta(days=2), time(23, 59))
 
-# -----------------------------
-# Sidebar controls (demo-friendly)
-# -----------------------------
-st.sidebar.title("Demo Controls")
-student_id = st.sidebar.text_input("Student ID", value="S001")
-course_id = st.sidebar.text_input("Course", value="BIO101")
-assignment_name = st.sidebar.text_input("Assignment name", value="Genetics Lab Report")
-
-deadline_date = st.sidebar.date_input("Deadline date", value=date.today())
-deadline_time = st.sidebar.time_input("Deadline time", value=time(23, 59))
-deadline_dt = datetime.combine(deadline_date, deadline_time)
-
-st.sidebar.divider()
-trigger = st.sidebar.selectbox(
-    "Select Trigger (for demo)",
-    [
-        "Delayed Initiation (no access)",
-        "Midway Check-in (low progress)",
-        "Cramming Reflection (late activity)"
-    ]
-)
-
-# optional: mock metrics (for text feedback)
-mock_last24_pct = st.sidebar.slider("Mock: % activity in last 24h (for cramming)", 0, 100, 72)
-mock_days_since_release = st.sidebar.slider("Mock: days since assignment released", 0, 14, 4)
-mock_days_to_deadline = st.sidebar.slider("Mock: days to deadline (for midway)", 0, 14, 5)
-
-st.sidebar.divider()
-if st.sidebar.button("Start Trigger Flow"):
-    if "Delayed Initiation" in trigger:
-        st.session_state.screen = "initiation_alert"
-        st.session_state.progress_bar = 0
-    elif "Midway" in trigger:
-        st.session_state.screen = "midway_progress"
-        st.session_state.progress_bar = 25
-    else:
-        st.session_state.screen = "cramming_summary"
-        st.session_state.progress_bar = 80
-
-if st.sidebar.button("Reset App State"):
-    for k in list(st.session_state.keys()):
-        del st.session_state[k]
-    st.rerun()
-
-if st.sidebar.button("Clear Saved Responses"):
-    if os.path.exists("goal_support_responses.csv"):
-        os.remove("goal_support_responses.csv")
-    st.session_state.last_saved = {}
-    st.sidebar.success("Saved responses cleared.")
-    st.rerun()
-
-# -----------------------------
-# Main
-# -----------------------------
 st.title("Behavior-Triggered Goal Support System")
-st.caption("Rule-based triggers + structured goal scaffolds (initiating, sustaining, completing).")
+st.caption("Three time-point supports based on assumed student log-data patterns.")
 
-# Home
-if st.session_state.screen == "home":
-    header_panel(assignment_name, deadline_dt, "No active intervention")
+tab1, tab2, tab3 = st.tabs(["Initiating", "Sustaining", "Completing"])
+
+with tab1:
+    header_panel(assignment_name, deadline_dt, "Initiation support", 0.15)
+
     card(
-        "How to use (for your submission demo)",
-        "Use the left sidebar to pick a trigger and click **Start Trigger Flow**. "
-        "Complete the short workflow; responses are saved to **goal_support_responses.csv**."
+        "⚠ Delayed Initiation Detected",
+        "This demo assumes that 3 days have passed since the assignment was released, "
+        "but the student has not yet started. The system prompts goal planning for the first step."
     )
-    st.info("Tip: You can screenshot each stage as your wireframe/prototype evidence.")
 
-# -----------------------------
-# 1) Delayed Initiation
-# -----------------------------
-elif st.session_state.screen == "initiation_alert":
-    header_panel(assignment_name, deadline_dt, "Initiation support")
-    card(
-        "⚠ You haven't started this assignment yet.",
-        f"Assignment has been available for **{mock_days_since_release} days**. "
-        "Starting early reduces last-minute stress. Let’s set your first step."
-    )
-    if st.button("Plan My First Step →"):
-        st.session_state.screen = "initiation_plan"
-        st.rerun()
-
-elif st.session_state.screen == "initiation_plan":
-    header_panel(assignment_name, deadline_dt, "Initiation: Micro-planning")
     st.subheader("STEP 1: Define the First Action")
     first_action = st.radio(
         "What is the very first physical action you can take?",
@@ -145,30 +75,23 @@ elif st.session_state.screen == "initiation_plan":
             "Create an outline / draft document",
             "Other"
         ],
-        index=1
+        key="init_first_action"
     )
+
     other_action = ""
     if first_action == "Other":
-        other_action = st.text_input("Other (please specify)")
+        other_action = st.text_input("Other (please specify)", key="init_other_action")
 
-    st.divider()
     st.subheader("STEP 2: Schedule It")
-    plan_date = st.date_input("When will you do this? (date)", value=date.today())
-    plan_time = st.time_input("Time", value=time(19, 0))
+    plan_date = st.date_input("When will you do this?", value=date.today(), key="init_date")
+    plan_time = st.time_input("Time", value=time(19, 0), key="init_time")
+    duration = st.radio(
+        "How long will the first session be?",
+        ["10 minutes", "20 minutes", "30+ minutes"],
+        key="init_duration"
+    )
 
-    duration = st.radio("How long will the first session be?", ["10 minutes", "20 minutes", "30+ minutes"], index=1)
-
-    colA, colB = st.columns(2)
-    with colA:
-        save = st.button("Save Plan ✅")
-    with colB:
-        back = st.button("← Back")
-
-    if back:
-        st.session_state.screen = "initiation_alert"
-        st.rerun()
-
-    if save:
+    if st.button("Save Initiation Plan", key="save_init"):
         planned_dt = datetime.combine(plan_date, plan_time)
         action_final = other_action.strip() if first_action == "Other" else first_action
 
@@ -184,57 +107,22 @@ elif st.session_state.screen == "initiation_plan":
             "input_duration": duration,
         }
         append_to_csv(row)
-        st.session_state.last_saved = row
-        st.session_state.progress_bar = 35
-        st.session_state.screen = "initiation_confirm"
-        st.rerun()
+        st.success("Initiation plan saved.")
 
-elif st.session_state.screen == "initiation_confirm":
-    header_panel(assignment_name, deadline_dt, "Initiation: Plan saved")
-    saved = st.session_state.get("last_saved", {})
-    card(
-        "✔ Plan Saved",
-        f"**First step:** {saved.get('input_first_action','(missing)')}<br>"
-        f"**Scheduled:** {saved.get('input_scheduled_start','(missing)')}<br>"
-        f"**Duration:** {saved.get('input_duration','(missing)')}",
-    )
-    c1, c2 = st.columns(2)
-    with c1:
-        if st.button("Close"):
-            st.session_state.screen = "home"
-            st.rerun()
-    with c2:
-        st.caption("Optional: connect to calendar later (not needed for MVP).")
+with tab2:
+    header_panel(assignment_name, deadline_dt, "Sustaining support", 0.45)
 
-# -----------------------------
-# 2) Midway Check-in (Sustaining)
-# -----------------------------
-elif st.session_state.screen == "midway_progress":
-    header_panel(assignment_name, deadline_dt, f"Midway check-in (deadline in ~{mock_days_to_deadline} days)")
     card(
-        "⏳ Midway Check-In",
-        f"The deadline is in **{mock_days_to_deadline} days**. "
-        "How much progress have you made?"
+        "⏳ Low Midway Progress Detected",
+        "This demo assumes the assignment follows a 7-day window and the student is now at day 5 "
+        "with limited progress. The system prompts the student to reset the next step."
     )
 
-    progress = st.radio("Select one:", ["0%", "25%", "50%", "75%", "Almost done"], index=1)
-
-    if st.button("Continue →"):
-        st.session_state.midway_progress = progress
-        # Branch
-        if progress in ["0%", "25%"]:
-            st.session_state.screen = "midway_low_progress"
-            st.session_state.progress_bar = 30
-        else:
-            st.session_state.screen = "midway_good_progress"
-            st.session_state.progress_bar = 55
-        st.rerun()
-
-elif st.session_state.screen == "midway_low_progress":
-    header_panel(assignment_name, deadline_dt, "Midway: Reset plan (low progress)")
-    card(
-        "Progress is still early.",
-        "Let’s figure out what’s slowing you down and reset the next step."
+    progress = st.radio(
+        "How much progress have you made so far?",
+        ["0%", "25%", "50%", "75%", "Almost done"],
+        index=1,
+        key="sustain_progress"
     )
 
     barrier = st.radio(
@@ -246,27 +134,21 @@ elif st.session_state.screen == "midway_low_progress":
             "Forgot about it",
             "Other"
         ],
-        index=0
+        key="sustain_barrier"
     )
+
     barrier_other = ""
     if barrier == "Other":
-        barrier_other = st.text_input("Other (please specify)")
+        barrier_other = st.text_input("Other (please specify)", key="sustain_other")
 
-    next_action = st.text_input("What is the next small action? (e.g., 'write methods paragraph')")
-    reset_date = st.date_input("When will you do it? (date)", value=date.today())
-    reset_time = st.time_input("Time", value=time(19, 0))
+    next_action = st.text_input(
+        "What is the next small action?",
+        key="sustain_next_action"
+    )
+    reset_date = st.date_input("When will you do it?", value=date.today(), key="sustain_date")
+    reset_time = st.time_input("Time", value=time(19, 0), key="sustain_time")
 
-    colA, colB = st.columns(2)
-    with colA:
-        save = st.button("Save Reset Plan ✅")
-    with colB:
-        back = st.button("← Back")
-
-    if back:
-        st.session_state.screen = "midway_progress"
-        st.rerun()
-
-    if save:
+    if st.button("Save Sustaining Plan", key="save_sustain"):
         reset_dt = datetime.combine(reset_date, reset_time)
         barrier_final = barrier_other.strip() if barrier == "Other" else barrier
 
@@ -277,94 +159,38 @@ elif st.session_state.screen == "midway_low_progress":
             "assignment_name": assignment_name,
             "trigger_type": "midway_checkin_low_progress",
             "deadline": deadline_dt.isoformat(timespec="minutes"),
-            "input_progress": st.session_state.get("midway_progress"),
+            "input_progress": progress,
             "input_barrier": barrier_final,
             "input_next_action": next_action.strip(),
             "input_next_action_time": reset_dt.isoformat(timespec="minutes"),
         }
         append_to_csv(row)
-        st.session_state.last_saved = row
-        st.session_state.progress_bar = 65
-        st.session_state.screen = "midway_confirm"
-        st.rerun()
+        st.success("Sustaining plan saved.")
 
-elif st.session_state.screen == "midway_good_progress":
-    header_panel(assignment_name, deadline_dt, "Midway: Keep momentum (good progress)")
+with tab3:
+    header_panel(assignment_name, deadline_dt, "Completing support", 0.85)
+
     card(
-        "You're making progress.",
-        "Want to schedule your next work session to protect your goal from distractions?"
+        "📊 Prior Last-Minute Pattern Detected",
+        "This demo assumes that 72% of the student's activity on the previous assignment "
+        "occurred within the last 24 hours before the deadline. The system prompts reflection "
+        "and forward planning for the next assignment."
     )
-    sched_date = st.date_input("Next session date", value=date.today())
-    sched_time = st.time_input("Next session time", value=time(19, 0))
-    duration = st.radio("Estimated duration", ["20 min", "45 min", "60+ min"], index=1)
 
-    colA, colB = st.columns(2)
-    with colA:
-        save = st.button("Schedule Session ✅")
-    with colB:
-        back = st.button("← Back")
+    mock_last24_pct = 72
+    early = 100 - mock_last24_pct
 
-    if back:
-        st.session_state.screen = "midway_progress"
-        st.rerun()
-
-    if save:
-        sched_dt = datetime.combine(sched_date, sched_time)
-        row = {
-            "timestamp": now_iso(),
-            "student_id": student_id,
-            "course_id": course_id,
-            "assignment_name": assignment_name,
-            "trigger_type": "midway_checkin_good_progress",
-            "deadline": deadline_dt.isoformat(timespec="minutes"),
-            "input_progress": st.session_state.get("midway_progress"),
-            "input_next_session_time": sched_dt.isoformat(timespec="minutes"),
-            "input_duration": duration,
-        }
-        append_to_csv(row)
-        st.session_state.last_saved = row
-        st.session_state.progress_bar = 70
-        st.session_state.screen = "midway_confirm"
-        st.rerun()
-
-elif st.session_state.screen == "midway_confirm":
-    header_panel(assignment_name, deadline_dt, "Midway: Saved")
-    saved = st.session_state.get("last_saved", {})
-    card(
-        "✔ Check-in Saved",
-        f"**Trigger:** {saved.get('trigger_type','')}<br>"
-        f"**Progress:** {saved.get('input_progress','')}<br>"
-        f"**Next step/session:** {saved.get('input_next_action','') or saved.get('input_next_session_time','')}<br>"
-    )
-    if st.button("Close"):
-        st.session_state.screen = "home"
-        st.rerun()
-
-# -----------------------------
-# 3) Cramming Reflection (Completing)
-# -----------------------------
-elif st.session_state.screen == "cramming_summary":
-    header_panel(assignment_name, deadline_dt, "Completing: Reflection")
-    card(
-        "📊 Activity Summary",
-        f"Most of your work (**{mock_last24_pct}%**) happened within 24 hours of the deadline."
-    )
-    # simple visual bar
-    st.write("Early activity vs Last 24 hours")
-    early = max(0, 100 - mock_last24_pct)
+    st.write("Previous assignment activity pattern")
     st.progress(early / 100)
-    st.caption(f"Early: {early}%")
+    st.caption(f"Early activity: {early}%")
     st.progress(mock_last24_pct / 100)
-    st.caption(f"Last 24h: {mock_last24_pct}%")
+    st.caption(f"Last 24 hours: {mock_last24_pct}%")
 
-    if st.button("Reflect →"):
-        st.session_state.screen = "cramming_reflect"
-        st.rerun()
-
-elif st.session_state.screen == "cramming_reflect":
-    header_panel(assignment_name, deadline_dt, "Completing: Reflect & Re-plan")
-    st.subheader("Reflection")
-    planned_start = st.date_input("When did you originally plan to start?", value=date.today())
+    planned_start = st.date_input(
+        "When did you originally plan to start?",
+        value=date.today() - timedelta(days=3),
+        key="complete_planned_start"
+    )
 
     barrier = st.radio(
         "What prevented earlier progress?",
@@ -375,39 +201,36 @@ elif st.session_state.screen == "cramming_reflect":
             "Felt overwhelmed",
             "Other"
         ],
-        index=0
+        key="complete_barrier"
     )
+
     barrier_other = ""
     if barrier == "Other":
-        barrier_other = st.text_input("Other (please specify)")
+        barrier_other = st.text_input("Other (please specify)", key="complete_other")
 
-    st.divider()
-    st.subheader("Re-plan (for next assignment)")
-    use_checkpoint = st.radio("Would you like to set a midpoint checkpoint for the next assignment?", ["Yes", "Skip"], index=0)
+    use_checkpoint = st.radio(
+        "Would you like to set a midpoint checkpoint for the next assignment?",
+        ["Yes", "Skip"],
+        key="complete_checkpoint"
+    )
 
-    suggested = deadline_dt.date()
-    # simple suggestion: deadline - 5 days (safe fallback; you can refine later)
-    try:
-        suggested_checkpoint = suggested.replace(day=suggested.day - 5)
-    except ValueError:
-        suggested_checkpoint = date.today()
+    checkpoint_date = st.date_input(
+        "Suggested checkpoint date",
+        value=date.today() + timedelta(days=2),
+        key="complete_date"
+    )
+    checkpoint_time = st.time_input(
+        "Checkpoint time",
+        value=time(19, 0),
+        key="complete_time"
+    )
 
-    checkpoint_date = st.date_input("Suggested checkpoint date", value=suggested_checkpoint)
-    checkpoint_time = st.time_input("Checkpoint time", value=time(19, 0))
-
-    colA, colB = st.columns(2)
-    with colA:
-        save = st.button("Save Reflection ✅")
-    with colB:
-        back = st.button("← Back")
-
-    if back:
-        st.session_state.screen = "cramming_summary"
-        st.rerun()
-
-    if save:
+    if st.button("Save Reflection", key="save_complete"):
         barrier_final = barrier_other.strip() if barrier == "Other" else barrier
-        checkpoint_dt = datetime.combine(checkpoint_date, checkpoint_time) if use_checkpoint == "Yes" else ""
+        checkpoint_dt = (
+            datetime.combine(checkpoint_date, checkpoint_time).isoformat(timespec="minutes")
+            if use_checkpoint == "Yes" else ""
+        )
 
         row = {
             "timestamp": now_iso(),
@@ -420,40 +243,17 @@ elif st.session_state.screen == "cramming_reflect":
             "input_planned_start_date": planned_start.isoformat(),
             "input_barrier": barrier_final,
             "input_set_checkpoint": use_checkpoint,
-            "input_checkpoint_time": checkpoint_dt if checkpoint_dt == "" else checkpoint_dt.isoformat(timespec="minutes"),
+            "input_checkpoint_time": checkpoint_dt,
         }
         append_to_csv(row)
-        st.session_state.last_saved = row
-        st.session_state.progress_bar = 90
-        st.session_state.screen = "cramming_confirm"
-        st.rerun()
+        st.success("Reflection saved.")
 
-elif st.session_state.screen == "cramming_confirm":
-    header_panel(assignment_name, deadline_dt, "Completing: Saved")
-    saved = st.session_state.get("last_saved", {})
-    card(
-        "✔ Reflection Saved",
-        f"**Barrier:** {saved.get('input_barrier','')}<br>"
-        f"**Checkpoint set:** {saved.get('input_set_checkpoint','')}<br>"
-        f"**Checkpoint time:** {saved.get('input_checkpoint_time','(none)')}",
-    )
-    if st.button("Close"):
-        st.session_state.screen = "home"
-        st.rerun()
-
-# -----------------------------
-# Footer: show saved data preview (helpful for submission)
-# -----------------------------
 st.divider()
 st.markdown("#### Saved Responses Preview")
+
 try:
     df = pd.read_csv("goal_support_responses.csv")
     st.dataframe(df.tail(10), width="stretch")
-    st.download_button(
-        "Download CSV",
-        data=df.to_csv(index=False).encode("utf-8"),
-        file_name="goal_support_responses.csv",
-        mime="text/csv"
-    )
 except FileNotFoundError:
-    st.caption("No saved responses yet. Complete a flow to generate the CSV.")
+    st.caption("No saved responses yet.")
+
