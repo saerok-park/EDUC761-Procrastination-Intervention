@@ -52,7 +52,7 @@ assignment_name = "Genetics Lab Report"
 deadline_dt = datetime.combine(date.today() + timedelta(days=2), time(23, 59))
 
 st.title("Goal Support System")
-st.caption("Three time-point supports based on assumed student log-data patterns.")
+st.caption("To help students' procrastination behaviros, this goal support system can be provided at three time points based on students' log-data patterns.")
 
 if st.button("Reset Demo"):
     for k in list(st.session_state.keys()):
@@ -124,7 +124,7 @@ with tab2:
     card(
         "⏳ Low Midway Progress Detected",
         "This demo assumes the assignment follows a 7-day window and the student is now at day 5 "
-        "with limited progress. The system prompts the student to reset the next step."
+        "with limited progress. The system prompts the student to monitor their progress and reset the next step."
     )
 
     progress = st.radio(
