@@ -52,7 +52,7 @@ assignment_name = "Genetics Lab Report"
 deadline_dt = datetime.combine(date.today() + timedelta(days=2), time(23, 59))
 
 st.title("Goal Support System")
-st.caption("To help students' procrastination behaviros, this goal support system can be provided at three time points based on students' log-data patterns.")
+st.caption("To help students' procrastination behaviors, this goal support system can be provided at three time points based on students' log-data patterns. This prototype includes three tabs: Initiating, Sustaining, and Completing.")
 
 if st.button("Reset Demo"):
     for k in list(st.session_state.keys()):
