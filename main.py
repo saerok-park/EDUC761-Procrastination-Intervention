@@ -297,9 +297,33 @@ def inject_custom_css():
         }
 
         div[data-testid="stTabs"] button {
-            font-size: 18px;
-            font-weight: 800;
-            padding: 14px 20px;
+            font-size: 22px;
+            font-weight: 900;
+            padding: 20px 34px;
+            border-radius: 16px 16px 0 0;
+        }
+        
+        div[data-testid="stTabs"] button p {
+            font-size: 22px;
+            font-weight: 900;
+        }
+        
+        div[data-testid="stTabs"] [role="tablist"] {
+            gap: 12px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        div[data-testid="stTabs"] [aria-selected="true"] {
+            background-color: #f1f5f9;
+            border-bottom: 4px solid #475569;
+        }
+
+        div[data-testid="stTabs"] [aria-selected="true"] p {
+            color: #111827;
+        }
+
+        div[data-testid="stTabs"] [aria-selected="false"] p {
+            color: #64748b;
         }
         </style>
         """,
@@ -409,63 +433,6 @@ def hero_section():
         """,
         unsafe_allow_html=True
     )
-
-
-def phase_overview():
-    st.markdown('<div class="section-title">Three-Phase Procrastination Support</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="section-caption">The system provides different support depending on where procrastination-related difficulty appears in the assignment process.</div>',
-        unsafe_allow_html=True
-    )
-
-    c1, c2, c3 = st.columns(3)
-
-    with c1:
-        st.markdown(
-            """
-            <div class="phase-card">
-                <div class="phase-number">Phase 1</div>
-                <div class="phase-title">🚀 Initiating</div>
-                <div class="phase-trigger">Trigger: No start after release</div>
-                <div class="phase-body">
-                    Helps students choose a small first action and schedule an initial work session.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with c2:
-        st.markdown(
-            """
-            <div class="phase-card">
-                <div class="phase-number">Phase 2</div>
-                <div class="phase-title">🔄 Sustaining</div>
-                <div class="phase-trigger">Trigger: Low midway progress</div>
-                <div class="phase-body">
-                    Helps students monitor progress, identify barriers, and reset a realistic next step.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with c3:
-        st.markdown(
-            """
-            <div class="phase-card">
-                <div class="phase-number">Phase 3</div>
-                <div class="phase-title">📌 Completing</div>
-                <div class="phase-trigger">Trigger: Last-minute work pattern</div>
-                <div class="phase-body">
-                    Helps students reflect on previous work patterns and plan earlier action for the next assignment.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.divider()
 
 
 def metric_overview(course_id, assignment_name, deadline_dt, next_assignment_name, next_assignment_deadline):
@@ -692,7 +659,6 @@ assignments = [
 # App layout
 # -----------------------------
 hero_section()
-phase_overview()
 
 metric_overview(
     course_id,
@@ -704,6 +670,8 @@ metric_overview(
 
 semester_flow(assignments, assignment_name)
 
+tab1, tab2, tab3 = st.tabs(["🚀 Initiating", "🔄 Sustaining", "📌 Completing"])
+
 if st.button("Reset Demo"):
     for k in list(st.session_state.keys()):
         del st.session_state[k]
@@ -713,7 +681,6 @@ if st.button("Reset Demo"):
 
     st.rerun()
 
-tab1, tab2, tab3 = st.tabs(["🚀 Initiating", "🔄 Sustaining", "📌 Completing"])
 
 
 # -----------------------------
