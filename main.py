@@ -3,13 +3,274 @@ import pandas as pd
 from datetime import datetime, date, time, timedelta
 import os
 
-st.set_page_config(page_title="Goal Support System", layout="centered")
+# -----------------------------
+# Page config
+# -----------------------------
+st.set_page_config(page_title="Goal Support System", layout="wide")
+
+
+# -----------------------------
+# Custom CSS
+# -----------------------------
+def inject_custom_css():
+    st.markdown(
+        """
+        <style>
+        .block-container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            max-width: 1200px;
+        }
+
+        .hero-box {
+            background: linear-gradient(135deg, #eef6ff 0%, #f8fbff 100%);
+            border: 1px solid #d8eaff;
+            border-radius: 20px;
+            padding: 26px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+        }
+
+        .hero-title {
+            font-size: 32px;
+            font-weight: 850;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: #4b5563;
+            line-height: 1.55;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #111827;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+
+        .section-caption {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .metric-card {
+            border-radius: 16px;
+            padding: 16px;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            text-align: center;
+            min-height: 95px;
+        }
+
+        .metric-title {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            color: #111827;
+            font-weight: 800;
+        }
+
+        .flow-card {
+            border-radius: 16px;
+            padding: 14px;
+            min-height: 125px;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .flow-card-current {
+            border: 2px solid #2563eb;
+            background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+        }
+
+        .flow-card-completed {
+            border: 1px solid #bbf7d0;
+            background: #f0fdf4;
+        }
+
+        .flow-week {
+            font-size: 12px;
+            font-weight: 800;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .flow-title {
+            font-size: 15px;
+            font-weight: 850;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .flow-status {
+            font-size: 12px;
+            color: #4b5563;
+            background-color: #f3f4f6;
+            border-radius: 999px;
+            padding: 5px 9px;
+            display: inline-block;
+        }
+
+        .status-current {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+            font-weight: 800;
+        }
+
+        .status-completed {
+            background-color: #dcfce7;
+            color: #15803d;
+            font-weight: 800;
+        }
+
+        .alert-card {
+            border-left: 7px solid #f59e0b;
+            background-color: #fffbeb;
+            border-radius: 16px;
+            padding: 18px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .alert-title {
+            font-size: 19px;
+            font-weight: 850;
+            color: #92400e;
+            margin-bottom: 6px;
+        }
+
+        .alert-body {
+            font-size: 15px;
+            color: #78350f;
+            line-height: 1.5;
+        }
+
+        .context-card {
+            border-left: 7px solid #6366f1;
+            background-color: #eef2ff;
+            border-radius: 16px;
+            padding: 18px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .context-title {
+            font-size: 19px;
+            font-weight: 850;
+            color: #3730a3;
+            margin-bottom: 6px;
+        }
+
+        .context-body {
+            font-size: 15px;
+            color: #312e81;
+            line-height: 1.5;
+        }
+
+        .feedback-card {
+            border-left: 7px solid #2563eb;
+            background-color: #eff6ff;
+            border-radius: 16px;
+            padding: 18px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .feedback-title {
+            font-size: 19px;
+            font-weight: 850;
+            color: #1d4ed8;
+            margin-bottom: 6px;
+        }
+
+        .feedback-body {
+            font-size: 15px;
+            color: #1e3a8a;
+            line-height: 1.5;
+        }
+
+        .recommend-card {
+            border-left: 7px solid #10b981;
+            background-color: #ecfdf5;
+            border-radius: 16px;
+            padding: 18px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .recommend-title {
+            font-size: 19px;
+            font-weight: 850;
+            color: #047857;
+            margin-bottom: 6px;
+        }
+
+        .recommend-body {
+            font-size: 15px;
+            color: #064e3b;
+            line-height: 1.5;
+        }
+
+        .why-card {
+            border-left: 7px solid #8b5cf6;
+            background-color: #f5f3ff;
+            border-radius: 16px;
+            padding: 18px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .why-title {
+            font-size: 19px;
+            font-weight: 850;
+            color: #6d28d9;
+            margin-bottom: 6px;
+        }
+
+        .why-body {
+            font-size: 15px;
+            color: #4c1d95;
+            line-height: 1.5;
+        }
+
+        .saved-card {
+            border-left: 7px solid #22c55e;
+            background-color: #f0fdf4;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 16px 0;
+            color: #166534;
+            font-weight: 750;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+inject_custom_css()
+
 
 # -----------------------------
 # Utilities
 # -----------------------------
 def now_iso():
     return datetime.now().isoformat(timespec="seconds")
+
 
 def append_to_csv(row: dict, path: str = "goal_support_responses.csv"):
     df_new = pd.DataFrame([row])
@@ -20,59 +281,178 @@ def append_to_csv(row: dict, path: str = "goal_support_responses.csv"):
         df = df_new
     df.to_csv(path, index=False)
 
-def card(title: str, body: str):
+
+def saved_message(text):
     st.markdown(
         f"""
-        <div style="border:1px solid #e6e6e6;border-radius:12px;padding:16px;margin:8px 0;">
-          <div style="font-size:18px;font-weight:700;margin-bottom:6px;">{title}</div>
-          <div style="font-size:15px;line-height:1.4;">{body}</div>
+        <div class="saved-card">
+            ✅ {text}
         </div>
         """,
         unsafe_allow_html=True
     )
 
-def header_panel(assignment_name: str, deadline_dt: datetime, progress_label: str, progress_value: float):
-    st.markdown("### Goal Support Panel")
-    c1, c2 = st.columns([2, 1])
+
+def alert_card(title, body):
+    st.markdown(
+        f"""
+        <div class="alert-card">
+            <div class="alert-title">{title}</div>
+            <div class="alert-body">{body}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def context_card(title, body):
+    st.markdown(
+        f"""
+        <div class="context-card">
+            <div class="context-title">{title}</div>
+            <div class="context-body">{body}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def feedback_card(title, body):
+    st.markdown(
+        f"""
+        <div class="feedback-card">
+            <div class="feedback-title">{title}</div>
+            <div class="feedback-body">{body}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def recommendation_card(title, body):
+    st.markdown(
+        f"""
+        <div class="recommend-card">
+            <div class="recommend-title">{title}</div>
+            <div class="recommend-body">{body}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def why_card(title, body):
+    st.markdown(
+        f"""
+        <div class="why-card">
+            <div class="why-title">{title}</div>
+            <div class="why-body">{body}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def hero_section():
+    st.markdown(
+        """
+        <div class="hero-box">
+            <div class="hero-title">Goal Support System</div>
+            <div class="hero-subtitle">
+                A prototype designed to reduce procrastination by providing timely support across three learning phases:
+                <b>initiating</b>, <b>sustaining</b>, and <b>completing</b>. 
+                The system uses assignment context, log-data patterns, reflection prompts, and rule-based adaptive feedback
+                to help students move from awareness to concrete action.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def metric_overview(course_id, assignment_name, deadline_dt, next_assignment_name, next_assignment_deadline):
+    c1, c2, c3, c4 = st.columns(4)
 
     with c1:
-        st.markdown(f"**Current Assignment:** {assignment_name}")
-        st.markdown(f"**Deadline:** {deadline_dt.strftime('%a, %b %d, %I:%M %p')}")
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">Course</div>
+                <div class="metric-value">{course_id}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     with c2:
-        st.markdown("**Progress**")
-        st.progress(progress_value)
-        st.caption(progress_label)
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">Current Assignment</div>
+                <div class="metric-value">{assignment_name}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c3:
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">Current Deadline</div>
+                <div class="metric-value">{deadline_dt.strftime('%b %d, %I:%M %p')}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c4:
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">Next Assignment</div>
+                <div class="metric-value">{next_assignment_name}<br>{next_assignment_deadline.strftime('%b %d')}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     st.divider()
 
+
 def semester_flow(assignments, current_assignment):
-    st.markdown("### Semester Assignment Flow")
-    st.caption("This overview shows where the current assignment fits within the larger course assignment sequence.")
+    st.markdown('<div class="section-title">Semester Assignment Flow</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-caption">This overview shows where the current assignment fits within the larger course assignment sequence.</div>',
+        unsafe_allow_html=True
+    )
 
     cols = st.columns(len(assignments))
 
     for i, assignment in enumerate(assignments):
-        with cols[i]:
-            is_current = assignment["name"] == current_assignment
-            border = "2px solid #4a90e2" if is_current else "1px solid #dddddd"
-            bg = "#eef6ff" if is_current else "#ffffff"
+        is_current = assignment["name"] == current_assignment
+        is_completed = assignment["status"] == "Completed"
 
+        if is_current:
+            card_class = "flow-card flow-card-current"
+            status_class = "flow-status status-current"
+            status_text = "Current"
+        elif is_completed:
+            card_class = "flow-card flow-card-completed"
+            status_class = "flow-status status-completed"
+            status_text = "Completed"
+        else:
+            card_class = "flow-card"
+            status_class = "flow-status"
+            status_text = assignment["status"]
+
+        with cols[i]:
             st.markdown(
                 f"""
-                <div style="
-                    border:{border};
-                    background-color:{bg};
-                    border-radius:12px;
-                    padding:10px;
-                    min-height:110px;
-                    text-align:center;
-                    margin-bottom:8px;">
-                    <div style="font-weight:700;font-size:14px;">{assignment['short']}</div>
-                    <div style="font-size:12px;margin-top:6px;">{assignment['deadline_label']}</div>
-                    <div style="font-size:11px;margin-top:8px;color:#666;">
-                        {'Current' if is_current else assignment['status']}
-                    </div>
+                <div class="{card_class}">
+                    <div class="flow-week">{assignment['deadline_label']}</div>
+                    <div class="flow-title">{assignment['short']}</div>
+                    <div class="{status_class}">{status_text}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -80,11 +460,28 @@ def semester_flow(assignments, current_assignment):
 
     st.divider()
 
-def next_assignment_panel(next_assignment_name, next_assignment_deadline, next_assignment_details):
-    st.markdown("### Next Assignment Information")
-    st.caption("This information is provided to help you connect reflection from the previous assignment to planning for the upcoming assignment.")
 
-    card(
+def header_panel(assignment_name, deadline_dt, progress_label, progress_value):
+    c1, c2 = st.columns([2.3, 1])
+
+    with c1:
+        context_card(
+            "Assignment Context",
+            f"""
+            <b>Assignment:</b> {assignment_name}<br>
+            <b>Deadline:</b> {deadline_dt.strftime('%a, %b %d, %I:%M %p')}<br>
+            <b>Purpose:</b> Use this support panel to turn your current learning situation into a specific next action.
+            """
+        )
+
+    with c2:
+        st.markdown("#### Progress")
+        st.progress(progress_value)
+        st.caption(progress_label)
+
+
+def next_assignment_panel(next_assignment_name, next_assignment_deadline, next_assignment_details):
+    context_card(
         f"Upcoming Assignment: {next_assignment_name}",
         f"""
         <b>Deadline:</b> {next_assignment_deadline.strftime('%a, %b %d, %I:%M %p')}<br>
@@ -92,6 +489,10 @@ def next_assignment_panel(next_assignment_name, next_assignment_deadline, next_a
         """
     )
 
+
+# -----------------------------
+# Feedback logic
+# -----------------------------
 def initiation_feedback(first_action, duration):
     if first_action == "Open the assignment page":
         return (
@@ -118,6 +519,7 @@ def initiation_feedback(first_action, duration):
             "Nice job identifying a first action. Starting with a small, specific step can reduce procrastination by making "
             "the task feel less overwhelming and easier to begin."
         )
+
 
 def sustaining_feedback(progress, barrier, next_action):
     if barrier == "Other assignments":
@@ -146,6 +548,7 @@ def sustaining_feedback(progress, barrier, next_action):
             "action so you can regain momentum before the deadline."
         )
 
+
 def completing_feedback(barrier, improvement_focus, next_assignment_name):
     if barrier == "Underestimated time needed":
         return (
@@ -173,6 +576,7 @@ def completing_feedback(barrier, improvement_focus, next_assignment_name):
             "previous assignment to choose a more specific and realistic first action next time."
         )
 
+
 # -----------------------------
 # Fixed demo values
 # -----------------------------
@@ -198,14 +602,18 @@ assignments = [
     {"name": "Final Research Report", "short": "Final", "deadline_label": "Week 14", "status": "Upcoming"},
 ]
 
-# -----------------------------
-# App
-# -----------------------------
-st.title("Goal Support System")
 
-st.caption(
-    "This prototype provides goal support at three time points based on students' log-data patterns: "
-    "Initiating, Sustaining, and Completing."
+# -----------------------------
+# App layout
+# -----------------------------
+hero_section()
+
+metric_overview(
+    course_id,
+    assignment_name,
+    deadline_dt,
+    next_assignment_name,
+    next_assignment_deadline
 )
 
 semester_flow(assignments, assignment_name)
@@ -219,7 +627,8 @@ if st.button("Reset Demo"):
 
     st.rerun()
 
-tab1, tab2, tab3 = st.tabs(["Initiating", "Sustaining", "Completing"])
+tab1, tab2, tab3 = st.tabs(["🚀 Initiating", "🔄 Sustaining", "📌 Completing"])
+
 
 # -----------------------------
 # Initiating Tab
@@ -227,10 +636,10 @@ tab1, tab2, tab3 = st.tabs(["Initiating", "Sustaining", "Completing"])
 with tab1:
     header_panel(assignment_name, deadline_dt, "Initiation support", 0.15)
 
-    card(
+    alert_card(
         "⚠ Delayed Initiation Detected",
-        "This demo assumes that 3 days have passed since the assignment was released, "
-        "but the student has not yet started. The system prompts goal planning for the first step."
+        "Three days have passed since the assignment was released, but no activity has been detected yet. "
+        "This support message helps you choose a small first step and schedule it."
     )
 
     st.subheader("STEP 1: Define the First Action")
@@ -280,15 +689,28 @@ with tab1:
 
         append_to_csv(row)
 
-        st.success("Initiation plan saved.")
-        st.markdown("#### Recommended Next Step")
-        st.info(initiation_feedback(action_final, duration))
+        saved_message("Initiation plan saved.")
 
-        st.markdown("#### Why this matters")
-        st.write(
+        feedback_card(
+            "Personalized Feedback",
+            initiation_feedback(action_final, duration)
+        )
+
+        recommendation_card(
+            "Recommended Next Step",
+            f"""
+            Start with: <b>{action_final if action_final else "your selected first action"}</b><br>
+            Scheduled time: <b>{planned_dt.strftime('%a, %b %d, %I:%M %p')}</b><br>
+            Planned duration: <b>{duration}</b>
+            """
+        )
+
+        why_card(
+            "Why this matters",
             "Planning a small first action can reduce the gap between intention and action. "
             "This helps students move from delayed initiation to concrete task engagement."
         )
+
 
 # -----------------------------
 # Sustaining Tab
@@ -296,10 +718,10 @@ with tab1:
 with tab2:
     header_panel(assignment_name, deadline_dt, "Sustaining support", 0.45)
 
-    card(
+    alert_card(
         "⏳ Low Midway Progress Detected",
-        "This demo assumes the assignment follows a 7-day window and the student is now at day 5 "
-        "with limited progress. The system prompts the student to monitor their progress and reset the next step."
+        "The assignment follows a 7-day work window, and the student is now at day 5 with limited progress. "
+        "This check-in helps the student monitor progress, identify barriers, and reset the next action."
     )
 
     st.subheader("STEP 1: Monitor Current Progress")
@@ -356,15 +778,29 @@ with tab2:
 
         append_to_csv(row)
 
-        st.success("Sustaining plan saved.")
-        st.markdown("#### Recommended Next Step")
-        st.info(sustaining_feedback(progress, barrier_final, next_action))
+        saved_message("Sustaining plan saved.")
 
-        st.markdown("#### Why this matters")
-        st.write(
+        feedback_card(
+            "Personalized Feedback",
+            sustaining_feedback(progress, barrier_final, next_action)
+        )
+
+        recommendation_card(
+            "Recommended Next Step",
+            f"""
+            Current progress: <b>{progress}</b><br>
+            Main barrier: <b>{barrier_final}</b><br>
+            Next action: <b>{next_action.strip() if next_action.strip() else "No action entered yet."}</b><br>
+            Scheduled time: <b>{reset_dt.strftime('%a, %b %d, %I:%M %p')}</b>
+            """
+        )
+
+        why_card(
+            "Why this matters",
             "Midway check-ins help students monitor whether their current progress matches the time remaining. "
             "When progress is lower than expected, resetting a small next action can support continued engagement."
         )
+
 
 # -----------------------------
 # Completing Tab
@@ -372,21 +808,28 @@ with tab2:
 with tab3:
     header_panel(assignment_name, deadline_dt, "Completing support", 0.85)
 
-    card(
+    alert_card(
         "📊 Prior Last-Minute Pattern Detected",
-        "This demo assumes that 72% of the student's activity on the previous assignment "
-        "occurred within the last 24 hours before the deadline. The system prompts reflection "
-        "and forward planning for the next assignment."
+        "The system detected that 72% of the student's activity on the previous assignment occurred within the last 24 hours "
+        "before the deadline. This support message prompts reflection and forward planning for the next assignment."
     )
 
     mock_last24_pct = 72
     early = 100 - mock_last24_pct
 
-    st.write("Previous assignment activity pattern")
-    st.progress(early / 100)
-    st.caption(f"Early activity: {early}%")
-    st.progress(mock_last24_pct / 100)
-    st.caption(f"Last 24 hours: {mock_last24_pct}%")
+    st.markdown("#### Previous Assignment Activity Pattern")
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.markdown("**Early activity**")
+        st.progress(early / 100)
+        st.caption(f"{early}% of activity occurred before the last 24 hours.")
+
+    with c2:
+        st.markdown("**Last-minute activity**")
+        st.progress(mock_last24_pct / 100)
+        st.caption(f"{mock_last24_pct}% of activity occurred within the last 24 hours.")
 
     st.divider()
 
@@ -489,10 +932,10 @@ with tab3:
 
         append_to_csv(row)
 
-        st.success("Reflection and next-assignment plan saved.")
+        saved_message("Reflection and next-assignment plan saved.")
 
-        st.markdown("#### Personalized Feedback")
-        st.info(
+        feedback_card(
+            "Personalized Feedback",
             completing_feedback(
                 barrier_final,
                 improvement_final,
@@ -500,28 +943,24 @@ with tab3:
             )
         )
 
-        st.markdown("#### Recommended Next Action")
-        st.write(
-            f"Your planned first step for **{next_assignment_name}** is:"
-        )
-
-        st.markdown(
+        recommendation_card(
+            "Recommended Next Action",
             f"""
-            <div style="border:1px solid #d6e9d6;border-radius:12px;padding:14px;margin:8px 0;background-color:#f7fff7;">
-              <b>Action:</b> {next_action.strip() if next_action.strip() else "No action entered yet."}<br>
-              <b>Scheduled time:</b> {next_step_dt.strftime('%a, %b %d, %I:%M %p')}<br>
-              <b>Focus:</b> {improvement_final}
-            </div>
-            """,
-            unsafe_allow_html=True
+            Upcoming assignment: <b>{next_assignment_name}</b><br>
+            Main reflection: <b>{barrier_final}</b><br>
+            Improvement focus: <b>{improvement_final}</b><br>
+            First action: <b>{next_action.strip() if next_action.strip() else "No action entered yet."}</b><br>
+            Scheduled time: <b>{next_step_dt.strftime('%a, %b %d, %I:%M %p')}</b>
+            """
         )
 
-        st.markdown("#### Why this matters")
-        st.write(
+        why_card(
+            "Why this matters",
             "Reflection is most useful when it leads to a concrete adjustment. "
-            "By connecting your previous last-minute pattern to a specific next action, "
-            "you can use reflection to improve planning, monitoring, and time management for the next assignment."
+            "By connecting the previous last-minute pattern to a specific next action, "
+            "students can use reflection to improve planning, monitoring, and time management for the next assignment."
         )
+
 
 # -----------------------------
 # Saved Responses Preview
