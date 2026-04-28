@@ -3,9 +3,6 @@ import pandas as pd
 from datetime import datetime, date, time, timedelta
 import os
 
-# -----------------------------
-# Page config
-# -----------------------------
 st.set_page_config(page_title="Goal Support System", layout="wide")
 
 
@@ -23,12 +20,12 @@ def inject_custom_css():
         }
 
         .hero-box {
-            background: linear-gradient(135deg, #eef6ff 0%, #f8fbff 100%);
-            border: 1px solid #d8eaff;
+            background: linear-gradient(135deg, #f3f7fb 0%, #ffffff 100%);
+            border: 1px solid #dbe4ee;
             border-radius: 20px;
             padding: 26px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.035);
         }
 
         .hero-title {
@@ -45,8 +42,8 @@ def inject_custom_css():
         }
 
         .section-title {
-            font-size: 22px;
-            font-weight: 800;
+            font-size: 23px;
+            font-weight: 850;
             color: #111827;
             margin-top: 8px;
             margin-bottom: 4px;
@@ -55,7 +52,7 @@ def inject_custom_css():
         .section-caption {
             font-size: 14px;
             color: #6b7280;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .metric-card {
@@ -63,7 +60,7 @@ def inject_custom_css():
             padding: 16px;
             background-color: white;
             border: 1px solid #e5e7eb;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.035);
             text-align: center;
             min-height: 95px;
         }
@@ -81,25 +78,67 @@ def inject_custom_css():
             font-weight: 800;
         }
 
+        .phase-card {
+            border-radius: 20px;
+            padding: 22px;
+            background-color: #ffffff;
+            border: 1px solid #dfe7f0;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            min-height: 190px;
+            margin-bottom: 12px;
+        }
+
+        .phase-number {
+            font-size: 13px;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .phase-title {
+            font-size: 23px;
+            font-weight: 900;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .phase-trigger {
+            font-size: 14px;
+            font-weight: 750;
+            color: #334155;
+            background-color: #f1f5f9;
+            border-radius: 999px;
+            display: inline-block;
+            padding: 6px 10px;
+            margin-bottom: 10px;
+        }
+
+        .phase-body {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
         .flow-card {
             border-radius: 16px;
             padding: 14px;
             min-height: 125px;
             background-color: white;
             border: 1px solid #e5e7eb;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.035);
             text-align: center;
             margin-bottom: 8px;
         }
 
         .flow-card-current {
-            border: 2px solid #2563eb;
-            background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+            border: 2px solid #64748b;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
         }
 
         .flow-card-completed {
-            border: 1px solid #bbf7d0;
-            background: #f0fdf4;
+            border: 1px solid #d1fae5;
+            background: #f7fefb;
         }
 
         .flow-week {
@@ -126,135 +165,141 @@ def inject_custom_css():
         }
 
         .status-current {
-            background-color: #dbeafe;
-            color: #1d4ed8;
+            background-color: #e2e8f0;
+            color: #334155;
             font-weight: 800;
         }
 
         .status-completed {
             background-color: #dcfce7;
-            color: #15803d;
+            color: #166534;
             font-weight: 800;
         }
 
         .alert-card {
-            border-left: 7px solid #f59e0b;
+            border-left: 7px solid #d97706;
             background-color: #fffbeb;
             border-radius: 16px;
             padding: 18px;
             margin: 16px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.025);
         }
 
         .alert-title {
             font-size: 19px;
             font-weight: 850;
-            color: #92400e;
+            color: #78350f;
             margin-bottom: 6px;
         }
 
         .alert-body {
             font-size: 15px;
-            color: #78350f;
+            color: #6b4e16;
             line-height: 1.5;
         }
 
         .context-card {
-            border-left: 7px solid #6366f1;
-            background-color: #eef2ff;
+            border-left: 7px solid #64748b;
+            background-color: #f8fafc;
             border-radius: 16px;
             padding: 18px;
             margin: 16px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.025);
         }
 
         .context-title {
             font-size: 19px;
             font-weight: 850;
-            color: #3730a3;
+            color: #334155;
             margin-bottom: 6px;
         }
 
         .context-body {
             font-size: 15px;
-            color: #312e81;
+            color: #475569;
             line-height: 1.5;
         }
 
         .feedback-card {
-            border-left: 7px solid #2563eb;
-            background-color: #eff6ff;
+            border-left: 7px solid #7c8da6;
+            background-color: #f4f7fb;
             border-radius: 16px;
             padding: 18px;
             margin: 16px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.025);
         }
 
         .feedback-title {
             font-size: 19px;
             font-weight: 850;
-            color: #1d4ed8;
+            color: #334155;
             margin-bottom: 6px;
         }
 
         .feedback-body {
             font-size: 15px;
-            color: #1e3a8a;
+            color: #475569;
             line-height: 1.5;
         }
 
         .recommend-card {
-            border-left: 7px solid #10b981;
-            background-color: #ecfdf5;
+            border-left: 7px solid #5f9f86;
+            background-color: #f3faf7;
             border-radius: 16px;
             padding: 18px;
             margin: 16px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.025);
         }
 
         .recommend-title {
             font-size: 19px;
             font-weight: 850;
-            color: #047857;
+            color: #2f6f5e;
             margin-bottom: 6px;
         }
 
         .recommend-body {
             font-size: 15px;
-            color: #064e3b;
+            color: #365f53;
             line-height: 1.5;
         }
 
         .why-card {
-            border-left: 7px solid #8b5cf6;
-            background-color: #f5f3ff;
+            border-left: 7px solid #9a8c98;
+            background-color: #faf7fb;
             border-radius: 16px;
             padding: 18px;
             margin: 16px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.025);
         }
 
         .why-title {
             font-size: 19px;
             font-weight: 850;
-            color: #6d28d9;
+            color: #5f5067;
             margin-bottom: 6px;
         }
 
         .why-body {
             font-size: 15px;
-            color: #4c1d95;
+            color: #5b5263;
             line-height: 1.5;
         }
 
         .saved-card {
-            border-left: 7px solid #22c55e;
-            background-color: #f0fdf4;
+            border-left: 7px solid #6aa57b;
+            background-color: #f4fbf6;
             border-radius: 16px;
             padding: 16px;
             margin: 16px 0;
-            color: #166534;
+            color: #2f6840;
             font-weight: 750;
+        }
+
+        div[data-testid="stTabs"] button {
+            font-size: 18px;
+            font-weight: 800;
+            padding: 14px 20px;
         }
         </style>
         """,
@@ -283,14 +328,7 @@ def append_to_csv(row: dict, path: str = "goal_support_responses.csv"):
 
 
 def saved_message(text):
-    st.markdown(
-        f"""
-        <div class="saved-card">
-            ✅ {text}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown(f"""<div class="saved-card">✅ {text}</div>""", unsafe_allow_html=True)
 
 
 def alert_card(title, body):
@@ -353,6 +391,9 @@ def why_card(title, body):
     )
 
 
+# -----------------------------
+# Layout components
+# -----------------------------
 def hero_section():
     st.markdown(
         """
@@ -370,15 +411,25 @@ def hero_section():
     )
 
 
-def metric_overview(course_id, assignment_name, deadline_dt, next_assignment_name, next_assignment_deadline):
-    c1, c2, c3, c4 = st.columns(4)
+def phase_overview():
+    st.markdown('<div class="section-title">Three-Phase Procrastination Support</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-caption">The system provides different support depending on where procrastination-related difficulty appears in the assignment process.</div>',
+        unsafe_allow_html=True
+    )
+
+    c1, c2, c3 = st.columns(3)
 
     with c1:
         st.markdown(
-            f"""
-            <div class="metric-card">
-                <div class="metric-title">Course</div>
-                <div class="metric-value">{course_id}</div>
+            """
+            <div class="phase-card">
+                <div class="phase-number">Phase 1</div>
+                <div class="phase-title">🚀 Initiating</div>
+                <div class="phase-trigger">Trigger: No start after release</div>
+                <div class="phase-body">
+                    Helps students choose a small first action and schedule an initial work session.
+                </div>
             </div>
             """,
             unsafe_allow_html=True
@@ -386,10 +437,14 @@ def metric_overview(course_id, assignment_name, deadline_dt, next_assignment_nam
 
     with c2:
         st.markdown(
-            f"""
-            <div class="metric-card">
-                <div class="metric-title">Current Assignment</div>
-                <div class="metric-value">{assignment_name}</div>
+            """
+            <div class="phase-card">
+                <div class="phase-number">Phase 2</div>
+                <div class="phase-title">🔄 Sustaining</div>
+                <div class="phase-trigger">Trigger: Low midway progress</div>
+                <div class="phase-body">
+                    Helps students monitor progress, identify barriers, and reset a realistic next step.
+                </div>
             </div>
             """,
             unsafe_allow_html=True
@@ -397,25 +452,43 @@ def metric_overview(course_id, assignment_name, deadline_dt, next_assignment_nam
 
     with c3:
         st.markdown(
-            f"""
-            <div class="metric-card">
-                <div class="metric-title">Current Deadline</div>
-                <div class="metric-value">{deadline_dt.strftime('%b %d, %I:%M %p')}</div>
+            """
+            <div class="phase-card">
+                <div class="phase-number">Phase 3</div>
+                <div class="phase-title">📌 Completing</div>
+                <div class="phase-trigger">Trigger: Last-minute work pattern</div>
+                <div class="phase-body">
+                    Helps students reflect on previous work patterns and plan earlier action for the next assignment.
+                </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-    with c4:
-        st.markdown(
-            f"""
-            <div class="metric-card">
-                <div class="metric-title">Next Assignment</div>
-                <div class="metric-value">{next_assignment_name}<br>{next_assignment_deadline.strftime('%b %d')}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    st.divider()
+
+
+def metric_overview(course_id, assignment_name, deadline_dt, next_assignment_name, next_assignment_deadline):
+    c1, c2, c3, c4 = st.columns(4)
+
+    metrics = [
+        ("Course", course_id),
+        ("Current Assignment", assignment_name),
+        ("Current Deadline", deadline_dt.strftime('%b %d, %I:%M %p')),
+        ("Next Assignment", f"{next_assignment_name}<br>{next_assignment_deadline.strftime('%b %d')}")
+    ]
+
+    for col, (title, value) in zip([c1, c2, c3, c4], metrics):
+        with col:
+            st.markdown(
+                f"""
+                <div class="metric-card">
+                    <div class="metric-title">{title}</div>
+                    <div class="metric-value">{value}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
     st.divider()
 
@@ -491,89 +564,101 @@ def next_assignment_panel(next_assignment_name, next_assignment_deadline, next_a
 
 
 # -----------------------------
-# Feedback logic
+# Feedback and recommendation logic
 # -----------------------------
-def initiation_feedback(first_action, duration):
+def initiation_feedback(first_action):
     if first_action == "Open the assignment page":
-        return (
-            "Good first step. Opening the assignment page reduces uncertainty and helps you move from avoiding the task "
-            "to engaging with it. After opening it, identify one requirement you need to complete first."
-        )
+        return "Opening the assignment page is a useful way to reduce uncertainty and begin engaging with the task."
     elif first_action == "Read the instructions carefully":
-        return (
-            "This is a strong starting point. Reading the instructions carefully can help you understand the task demands "
-            "and make a more realistic plan. After reading, write down one concrete subtask to complete next."
-        )
+        return "Reading the instructions carefully helps you understand the task demands before committing to a larger plan."
     elif first_action == "Gather materials/resources":
-        return (
-            "Good plan. Gathering resources can make the task feel more manageable because you are preparing the conditions "
-            "for focused work. After gathering materials, decide which part of the assignment you will work on first."
-        )
+        return "Gathering resources prepares the conditions for focused work and can make the task feel more manageable."
     elif first_action == "Create an outline / draft document":
-        return (
-            "Creating an outline is a useful strategy because it turns a large assignment into smaller parts. "
-            "After your first session, try to label the sections that still need more work."
-        )
+        return "Creating an outline turns a large assignment into smaller, more manageable parts."
     else:
-        return (
-            "Nice job identifying a first action. Starting with a small, specific step can reduce procrastination by making "
-            "the task feel less overwhelming and easier to begin."
-        )
+        return "Identifying a small first action is a productive way to make the task less overwhelming."
 
 
-def sustaining_feedback(progress, barrier, next_action):
+def initiation_recommendation(first_action, planned_dt, duration):
+    return (
+        f"After your scheduled <b>{duration}</b> session, do not stop at simply completing the first action. "
+        f"Use that session to identify the next concrete subtask. For example, after you <b>{first_action}</b>, "
+        f"write down one thing you need to complete next and when you will do it."
+    )
+
+
+def sustaining_feedback(barrier):
+    if barrier == "Other assignments":
+        return "Competing deadlines can make it harder to sustain progress because attention is divided across tasks."
+    elif barrier == "Not sure where to start next":
+        return "Uncertainty about the next step can interrupt progress even after the assignment has already been started."
+    elif barrier == "Task feels difficult":
+        return "When the task feels difficult, avoidance can increase unless the work is broken into smaller steps."
+    elif barrier == "Forgot about it":
+        return "Forgetting about the assignment suggests that external reminders or scheduled check-ins may be useful."
+    else:
+        return "Monitoring your barrier is an important step because it helps you choose a better next action."
+
+
+def sustaining_recommendation(progress, barrier, next_action, reset_dt):
     if barrier == "Other assignments":
         return (
-            "It sounds like competing deadlines are making it harder to sustain progress. A useful next step is to protect "
-            "a short work session for this assignment, even if it is only 20–30 minutes, so progress does not stop completely."
+            f"Protect a short work block for this assignment before switching to other tasks. "
+            f"Start with <b>{next_action if next_action else 'one small action'}</b> at "
+            f"<b>{reset_dt.strftime('%a, %b %d, %I:%M %p')}</b>, even if the session is brief."
         )
     elif barrier == "Not sure where to start next":
         return (
-            "Uncertainty can make it difficult to continue. Your next action should be small and concrete. Instead of trying "
-            "to finish the whole assignment, focus on identifying the next section, question, or paragraph to complete."
+            f"Before trying to make major progress, spend the first 5 minutes clarifying the next section or question. "
+            f"Then complete <b>{next_action if next_action else 'one small action'}</b>."
         )
     elif barrier == "Task feels difficult":
         return (
-            "When a task feels difficult, breaking it into smaller steps can help rebuild momentum. Start with one manageable "
-            "part and use that progress to decide what support or resources you may need next."
-        )
-    elif barrier == "Forgot about it":
-        return (
-            "Forgetting about the assignment is a sign that external reminders may help. Scheduling your next action now can "
-            "support monitoring and help you re-engage before the deadline gets too close."
+            f"Choose the easiest meaningful part of the task first. Use <b>{next_action if next_action else 'your next action'}</b> "
+            f"as a low-pressure entry point, then decide whether you need help or additional resources."
         )
     else:
         return (
-            "Your response shows that you are monitoring your progress. The next step is to turn that reflection into a specific "
-            "action so you can regain momentum before the deadline."
+            f"Use your scheduled time to restart momentum. Begin with <b>{next_action if next_action else 'one small action'}</b>, "
+            f"then check whether your progress has moved beyond <b>{progress}</b>."
         )
 
 
-def completing_feedback(barrier, improvement_focus, next_assignment_name):
+def completing_feedback(barrier, next_assignment_name):
+    if barrier == "Underestimated time needed":
+        return f"Underestimating time can lead to last-minute work. This reflection can help you plan more realistic work sessions for {next_assignment_name}."
+    elif barrier == "Didn't know how to begin":
+        return f"Difficulty beginning suggests that the first step for {next_assignment_name} should be very small and concrete."
+    elif barrier == "Felt overwhelmed":
+        return f"Feeling overwhelmed suggests that {next_assignment_name} should be broken into smaller parts before starting."
+    elif barrier == "Other assignments":
+        return f"Competing assignments can delay progress, so {next_assignment_name} may need an earlier protected work session."
+    else:
+        return f"Your reflection can help you make a more intentional plan for {next_assignment_name}."
+
+
+def completing_recommendation(barrier, improvement_focus, next_action, next_step_dt, next_assignment_name):
     if barrier == "Underestimated time needed":
         return (
-            f"This reflection is useful because underestimating time can lead to last-minute work. For {next_assignment_name}, "
-            "try scheduling an earlier first session and a midway check-in so you can adjust your plan before the deadline."
+            f"For <b>{next_assignment_name}</b>, add one extra early planning session before your first work session. "
+            f"Use that time to estimate how long each section will take, then begin with "
+            f"<b>{next_action if next_action else 'your first planned action'}</b>."
         )
     elif barrier == "Didn't know how to begin":
         return (
-            f"If beginning was difficult, the next assignment should start with a very small first step. For {next_assignment_name}, "
-            "begin by reading the instructions and identifying one concrete task you can complete first."
+            f"For <b>{next_assignment_name}</b>, begin with a task-understanding step before doing the main work. "
+            f"At <b>{next_step_dt.strftime('%a, %b %d, %I:%M %p')}</b>, start by reviewing the instructions and identifying the first section to complete."
         )
     elif barrier == "Felt overwhelmed":
         return (
-            f"Feeling overwhelmed often means the task needs to be broken into smaller parts. For {next_assignment_name}, "
-            "try creating a short task list and choosing only the first step to complete in your first work session."
-        )
-    elif barrier == "Other assignments":
-        return (
-            f"Competing assignments can make it easy to delay progress. For {next_assignment_name}, schedule one early work session "
-            "before other deadlines become urgent, so you have a starting point already in place."
+            f"For <b>{next_assignment_name}</b>, create a short task list with 3 smaller parts. "
+            f"Then only focus on the first part: <b>{next_action if next_action else 'your first planned action'}</b>."
         )
     else:
         return (
-            f"Your reflection can help you make a better plan for {next_assignment_name}. The goal is to use what happened in the "
-            "previous assignment to choose a more specific and realistic first action next time."
+            f"For <b>{next_assignment_name}</b>, turn your improvement focus, <b>{improvement_focus}</b>, into a concrete scheduled behavior. "
+            f"Begin with <b>{next_action if next_action else 'your first planned action'}</b> at "
+            f"<b>{next_step_dt.strftime('%a, %b %d, %I:%M %p')}</b>."
         )
 
 
@@ -607,6 +692,7 @@ assignments = [
 # App layout
 # -----------------------------
 hero_section()
+phase_overview()
 
 metric_overview(
     course_id,
@@ -693,16 +779,12 @@ with tab1:
 
         feedback_card(
             "Personalized Feedback",
-            initiation_feedback(action_final, duration)
+            initiation_feedback(action_final)
         )
 
         recommendation_card(
-            "Recommended Next Step",
-            f"""
-            Start with: <b>{action_final if action_final else "your selected first action"}</b><br>
-            Scheduled time: <b>{planned_dt.strftime('%a, %b %d, %I:%M %p')}</b><br>
-            Planned duration: <b>{duration}</b>
-            """
+            "Recommended Next Action",
+            initiation_recommendation(action_final, planned_dt, duration)
         )
 
         why_card(
@@ -782,17 +864,12 @@ with tab2:
 
         feedback_card(
             "Personalized Feedback",
-            sustaining_feedback(progress, barrier_final, next_action)
+            sustaining_feedback(barrier_final)
         )
 
         recommendation_card(
-            "Recommended Next Step",
-            f"""
-            Current progress: <b>{progress}</b><br>
-            Main barrier: <b>{barrier_final}</b><br>
-            Next action: <b>{next_action.strip() if next_action.strip() else "No action entered yet."}</b><br>
-            Scheduled time: <b>{reset_dt.strftime('%a, %b %d, %I:%M %p')}</b>
-            """
+            "Recommended Next Action",
+            sustaining_recommendation(progress, barrier_final, next_action.strip(), reset_dt)
         )
 
         why_card(
@@ -833,12 +910,6 @@ with tab3:
 
     st.divider()
 
-    next_assignment_panel(
-        next_assignment_name,
-        next_assignment_deadline,
-        next_assignment_details
-    )
-
     st.subheader("STEP 1: Reflect on the Previous Assignment")
 
     planned_start = st.date_input(
@@ -864,6 +935,12 @@ with tab3:
         barrier_other = st.text_input("Other (please specify)", key="complete_other")
 
     st.divider()
+
+    next_assignment_panel(
+        next_assignment_name,
+        next_assignment_deadline,
+        next_assignment_details
+    )
 
     st.subheader("STEP 2: Plan for the Next Assignment")
 
@@ -936,22 +1013,18 @@ with tab3:
 
         feedback_card(
             "Personalized Feedback",
-            completing_feedback(
-                barrier_final,
-                improvement_final,
-                next_assignment_name
-            )
+            completing_feedback(barrier_final, next_assignment_name)
         )
 
         recommendation_card(
             "Recommended Next Action",
-            f"""
-            Upcoming assignment: <b>{next_assignment_name}</b><br>
-            Main reflection: <b>{barrier_final}</b><br>
-            Improvement focus: <b>{improvement_final}</b><br>
-            First action: <b>{next_action.strip() if next_action.strip() else "No action entered yet."}</b><br>
-            Scheduled time: <b>{next_step_dt.strftime('%a, %b %d, %I:%M %p')}</b>
-            """
+            completing_recommendation(
+                barrier_final,
+                improvement_final,
+                next_action.strip(),
+                next_step_dt,
+                next_assignment_name
+            )
         )
 
         why_card(
