@@ -296,14 +296,14 @@ def inject_custom_css():
             font-weight: 750;
         }
 
-        div[data-testid="stTabs"] button {
+        div[data-testid="stTabs"] [role="tab"] {
             font-size: 22px;
             font-weight: 900;
             padding: 20px 34px;
             border-radius: 16px 16px 0 0;
         }
         
-        div[data-testid="stTabs"] button p {
+        div[data-testid="stTabs"] [role="tab"] p {
             font-size: 22px;
             font-weight: 900;
         }
